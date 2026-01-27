@@ -1,7 +1,9 @@
+import abc
 from collections.abc import Callable, Mapping, Sequence
 import dataclasses
 import re
 from typing import Protocol, TypeAlias, TypeVar, runtime_checkable
+from scipy.spatial.transform import Rotation
 
 import flax.traverse_util as traverse_util
 import jax
@@ -221,6 +223,116 @@ class DeltaActions(DataTransformFn):
 
         return data
 
+@dataclasses.dataclass(frozen=True)
+class SpaceTransformFn(DataTransformFn, abc.ABC):
+    """Repacks the action or state into a different space."""
+
+    # Index of the first dimenstion for the action dimensions to be repacked into a different space.
+    action_index: int | None = None
+
+    # Index of the first dimenstion for the state dimensions to be repacked into a different space.
+    state_index: int | None = None
+
+    def __call__(self, data: DataDict) -> DataDict:
+        if "actions" in data and self.action_index is not None:
+            data["actions"] = self._transform(data["actions"], self.action_index)
+        if "state" in data and self.state_index is not None:
+            data["state"] = self._transform(data["state"], self.state_index)
+        return data
+
+    @abc.abstractmethod
+    def _transform(self, data, idx):
+        raise NotImplementedError
+
+@dataclasses.dataclass(frozen=True)
+class QuatToRotVec(SpaceTransformFn):
+    """Repacks quaternion actions into a rotational vector space.
+    
+    Assumes [x, y, z, w] and will transform it into [wx, wy, wz]
+    """
+
+    def _transform(self, data, idx):
+        quat = data[..., idx : idx + 4]
+        rotvec = Rotation.from_quat(quat).as_rotvec()
+        return np.concatenate([data[..., :idx], rotvec, data[..., idx + 4:]], axis=-1)
+
+@dataclasses.dataclass(frozen=True)
+class RotVecToQuat(SpaceTransformFn):
+    """Repacks rotational vector actions into a quaternion space.
+    
+    Assumes [wx, wy, wz] and will transform it into [x, y, z, w]
+    """
+
+    def _transform(self, data, idx):
+        rotvec = data[..., idx : idx + 3]
+        quat = Rotation.from_rotvec(rotvec).as_quat()
+        return np.concatenate([data[..., :idx], quat, data[..., idx + 3:]], axis=-1)
+
+@dataclasses.dataclass(frozen=True)
+class QuatToR6D(SpaceTransformFn):
+    """Repacks quaternion actions into  the first two columns of a rotation matrix.
+    
+    Assumes [x, y, z, w] and will transform it into [r00, r01, r02, r10, r11, r12]
+    """
+
+    def _transform(self, data, idx):
+        x, y, z, w = data[..., idx : idx + 4]
+
+        return np.concatenate([data[..., :idx], np.array([1-2*(y*y+z*z), 2*(x*y+w*z), 2*(x*z-w*y), 2*(x*y-w*z), 1-2*(x*x+z*z), 2*(y*z+w*x)]), data[..., idx + 4:]], axis=-1)
+
+@dataclasses.dataclass(frozen=True)
+class R6DToQuat(SpaceTransformFn):
+    """Repacks the first two columns of a rotation matrix into a quaternion space.
+    
+    Assumes [r00, r01, r02, r10, r11, r12] and will transform it into [x, y, z, w]
+    """
+
+    def _transform(self, data, idx):
+        d6 = data[..., idx : idx + 6]
+        quat = self._six_d_to_quaternion_scipy(d6)
+        return np.concatenate([data[..., :idx], quat, data[..., idx + 6:]], axis=-1)
+
+    def _six_d_to_quaternion_scipy(self, d6):
+        """
+        Converts 6D rotation representation to quaternions using SciPy.
+        Input: d6 [r00, r01, r02, r10, r11, r12]
+        Output: quaternions in [x, y, z, w] format
+        """
+        d6 = np.array(d6)
+        # Reshape if it's a single vector to (1, 6) for consistent batch processing
+        input_shape = d6.shape
+        if d6.ndim == 1:
+            d6 = d6[None, :]
+
+        # 1. Extract the two vectors
+        a1 = d6[:, 0:3]
+        a2 = d6[:, 3:6]
+
+        # 2. Gram-Schmidt Orthogonalization
+        # Normalize first vector
+        b1 = a1 / np.linalg.norm(a1, axis=1, keepdims=True)
+        
+        # Orthogonalize a2 relative to b1
+        dot_product = np.sum(b1 * a2, axis=1, keepdims=True)
+        u2 = a2 - dot_product * b1
+        
+        # Normalize second vector
+        b2 = u2 / np.linalg.norm(u2, axis=1, keepdims=True)
+        
+        # Compute third vector (cross product)
+        b3 = np.cross(b1, b2)
+
+        # 3. Construct the rotation matrix (N, 3, 3)
+        # Reshape vectors to (N, 3, 1) and stack horizontally
+        matrix = np.stack([b1, b2, b3], axis=-1)
+
+        # 4. Convert to Quaternions using SciPy
+        rot = Rotation.from_matrix(matrix)
+        quat = rot.as_quat()  # Returns [x, y, z, w]
+
+        # Return shape (4,) if input was (6,)
+        return quat.flatten() if len(input_shape) == 1 else quat
+       
 
 @dataclasses.dataclass(frozen=True)
 class AbsoluteActions(DataTransformFn):
