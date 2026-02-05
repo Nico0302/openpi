@@ -47,7 +47,7 @@ def main(args: Args) -> None:
             )
         ),
         subscribers=[],
-        max_hz=10,
+        max_hz=30,
         num_episodes=args.num_episodes,
         max_episode_steps=args.max_episode_steps,
     )

@@ -24,7 +24,7 @@ overrides = [
 
 [[manifest.dependency-metadata]]
 name = "lerobot"
-version = "0.4.3"
+version = "0.4.2"
 requires-dist = ["datasets>=4.0.0,<4.2.0", "diffusers>=0.27.2,<0.36.0", "huggingface-hub[hf-transfer,cli]>=0.34.2,<0.36.0", "accelerate>=1.10.0,<2.0.0", "setuptools>=71.0.0,<81.0.0", "cmake>=3.29.0.1,<4.2.0", "einops>=0.8.0,<0.9.0", "opencv-python-headless>=4.9.0,<4.13.0", "av>=15.0.0,<16.0.0", "jsonlines>=4.0.0,<5.0.0", "packaging>=24.2,<26.0", "pynput>=1.7.7,<1.9.0", "pyserial>=3.5,<4.0", "wandb>=0.24.0,<0.25.0", "torch>=2.2.1,<2.8.0", "torchcodec>=0.2.1,<0.6.0 ; (platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'armv7l' and sys_platform == 'linux') or (platform_machine != 'x86_64' and sys_platform == 'darwin') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32')", "torchvision>=0.21.0,<0.23.0", "draccus==0.10.0", "deepdiff>=7.0.1,<9.0.0", "imageio[ffmpeg]>=2.34.0,<3.0.0", "termcolor>=2.4.0,<4.0.0"]
 
 [[package]]
@@ -1536,7 +1536,7 @@ wheels = [
 
 [[package]]
 name = "lerobot"
-version = "0.4.3"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "accelerate" },
@@ -1561,29 +1561,41 @@ dependencies = [
     { name = "torchvision" },
     { name = "wandb" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/9e/75411d19663d385c36d7c40db078482fa4f0bbea2872fdf5c7d816861e66/lerobot-0.4.3.tar.gz", hash = "sha256:608a81c38b48ad9c32d4f3f17cd789e9fd3a27bf621398b089210294cc3b325a", size = 781866, upload-time = "2026-01-22T10:59:49.215Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/dd/6b/f80861cb1dbc908a45a7c96bdd88cf77de1e259f3b5a183ff859cca71fe7/lerobot-0.4.2.tar.gz", hash = "sha256:9fe72d9f2ad26438c03277f90b13efef126dd680ac082d112f9eef804be78101", size = 576787, upload-time = "2025-11-27T21:42:53.349Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/c9/c38f0bfe33527d1b139f67850d6a4c113d42d630cbf4846d02e3d6372d97/lerobot-0.4.3-py3-none-any.whl", hash = "sha256:b08c1c15b2356bd4e658122deabfb9dacd2d7447de4a4327720991723d4edf2c", size = 993646, upload-time = "2026-01-22T10:59:47.591Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/58/f5f9d6c0451df3e5cf9c484b1eb6a3abb93016677630a615b925c9da189a/lerobot-0.4.2-py3-none-any.whl", hash = "sha256:af4e5c709522c8022703e10431c14ae65b2e967e7ab608f51a07c03c38cefe04", size = 758780, upload-time = "2025-11-27T21:42:51.687Z" },
 ]
 
 [[package]]
 name = "lerobot-robot-ure"
 version = "0.1.0"
-source = { git = "https://github.com/Nico0302/leros2.git?subdirectory=examples%2Flerobot_robot_ure#6c6153997041b5acfd24264ac03a6c867891675e" }
+source = { editable = "../../../colcon_ws/src/leros2/examples/lerobot_robot_ure" }
 dependencies = [
     { name = "leros2" },
 ]
 
+[package.metadata]
+requires-dist = [{ name = "leros2", editable = "../../../colcon_ws/src/leros2" }]
+
 [[package]]
 name = "leros2"
 version = "0.1.0"
-source = { git = "https://github.com/Nico0302/leros2.git#6c6153997041b5acfd24264ac03a6c867891675e" }
+source = { editable = "../../../colcon_ws/src/leros2" }
 dependencies = [
     { name = "black" },
     { name = "cv-bridge" },
     { name = "draccus" },
     { name = "lerobot" },
     { name = "numpy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "black", specifier = ">=25.11.0" },
+    { name = "cv-bridge", specifier = ">=1.13.0.post0" },
+    { name = "draccus", specifier = ">=0.10.0" },
+    { name = "lerobot", specifier = ">=0.4.2,<0.4.3" },
+    { name = "numpy", specifier = "<2.0.0" },
 ]
 
 [[package]]
@@ -2225,7 +2237,7 @@ requires-dist = [
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "jax", extras = ["cuda12"], specifier = "==0.5.3" },
     { name = "jaxtyping", specifier = "==0.2.36" },
-    { name = "lerobot", specifier = "==0.4.3" },
+    { name = "lerobot", specifier = "==0.4.2" },
     { name = "ml-collections", specifier = "==1.0.0" },
     { name = "nbformat", specifier = ">=5.10.4" },
     { name = "numpy", specifier = ">=1.22.4,<2.0.0" },
@@ -2259,7 +2271,7 @@ dev = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "ruff", specifier = ">=0.8.6" },
 ]
-leros2 = [{ name = "lerobot-robot-ure", git = "https://github.com/Nico0302/leros2.git?subdirectory=examples%2Flerobot_robot_ure" }]
+leros2 = [{ name = "lerobot-robot-ure", editable = "../../../colcon_ws/src/leros2/examples/lerobot_robot_ure" }]
 
 [[package]]
 name = "openpi-client"
@@ -3752,7 +3764,7 @@ name = "triton"
 version = "3.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools" },
+    { name = "setuptools", marker = "platform_machine != 'aarch64' and sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/5f/950fb373bf9c01ad4eb5a8cd5eaf32cdf9e238c02f9293557a2129b9c4ac/triton-3.3.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9999e83aba21e1a78c1f36f21bce621b77bcaa530277a50484a7cb4a822f6e43", size = 155669138, upload-time = "2025-05-29T23:39:51.771Z" },

@@ -37,7 +37,8 @@ class LeRobotEnvironment(_environment.Environment):
         for feature in self.observation_features:
             if isinstance(self.observation_features[feature], tuple):
                 # flip images by 180°
-                images[feature] = obs_dict[feature][::-1, ::-1]
+                # images[feature] = obs_dict[feature][::-1, ::-1]
+                images[feature] = obs_dict[feature]
             else:
                 state.append(obs_dict[feature])
         assert len(images.keys()) >= 1  # at least one image needs to be included in the robot observation
@@ -52,6 +53,7 @@ class LeRobotEnvironment(_environment.Environment):
         action_tensor = action["actions"]
         action_dict = {}
         if len(action_tensor) != len(self._action_features):
+            print(self._action_features)
             raise ValueError(
                 f"Action tensor has different length ({len(action_tensor)}) than action features ({len(self._action_features)})."
             )
