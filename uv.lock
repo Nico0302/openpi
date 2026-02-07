@@ -1569,29 +1569,21 @@ wheels = [
 [[package]]
 name = "lerobot-robot-ure"
 version = "0.1.0"
-source = { editable = "../../../colcon_ws/src/leros2/examples/lerobot_robot_ure" }
+source = { git = "https://github.com/Nico0302/leros2.git?subdirectory=examples%2Flerobot_robot_ure#26230302af0ff1d96752b3476763f917d021c1fa" }
 dependencies = [
     { name = "leros2" },
 ]
 
-[package.metadata]
-requires-dist = [{ name = "leros2", editable = "../../../colcon_ws/src/leros2" }]
-
 [[package]]
 name = "leros2"
 version = "0.1.0"
-source = { editable = "../../../colcon_ws/src/leros2" }
+source = { git = "https://github.com/Nico0302/leros2.git#26230302af0ff1d96752b3476763f917d021c1fa" }
 dependencies = [
     { name = "black" },
     { name = "cv-bridge" },
+    { name = "draccus" },
     { name = "lerobot" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "black", specifier = ">=25.11.0" },
-    { name = "cv-bridge", specifier = ">=1.13.0.post0" },
-    { name = "lerobot", specifier = ">=0.4.2" },
+    { name = "numpy" },
 ]
 
 [[package]]
@@ -2267,7 +2259,7 @@ dev = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "ruff", specifier = ">=0.8.6" },
 ]
-leros2 = [{ name = "lerobot-robot-ure", editable = "../../../colcon_ws/src/leros2/examples/lerobot_robot_ure" }]
+leros2 = [{ name = "lerobot-robot-ure", git = "https://github.com/Nico0302/leros2.git?subdirectory=examples%2Flerobot_robot_ure" }]
 
 [[package]]
 name = "openpi-client"
