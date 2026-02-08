@@ -1,5 +1,12 @@
 # openpi
 
+> [!NOTE]
+> Following changes were made to the original openpi repo:
+> - Use LeRobot v3+ datasets for training (see [`LeROS2DataConfig`](src/openpi/training/config.py#L437))
+> - Use the LeRobot robot hardware interface for inference (see [`leros2`](examples/leros2/README.md))
+> - Containerized training environment (see [Docker Setup](scripts/docker/README.md))
+> - Additional transforms for quaternion actions and states
+
 openpi holds open-source models and packages for robotics, published by the [Physical Intelligence team](https://www.physicalintelligence.company/).
 
 Currently, this repo contains three types of models:

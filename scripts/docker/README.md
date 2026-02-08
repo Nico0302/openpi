@@ -9,7 +9,7 @@ docker build --target training -t openpi_train -f scripts/docker/Dockerfile .
 ```
 
 ```shell
-docker save openpi_train | gzip | ssh slurm "cat > ~/openpi_train.tar.gz"
+docker save openpi_train | gzip > openpi_train.tar.gz
 ```
 
 ### Run
